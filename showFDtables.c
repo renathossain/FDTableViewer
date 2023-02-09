@@ -15,7 +15,7 @@ int is_number(char *number) {
 int arg_checker(int *flag_value, int default_value, char *passed_string, char *true_string) {
 	if(strcmp(passed_string, true_string) == 0) {
         	if((*flag_value) != default_value) {
-			fprintf(stderr, "Error: '%s' option specified multiple times\n", true_string);
+			fprintf(stderr, "Error: '%s' option specified multiple times.\n", true_string);
 			return 0;
 		}
 		*flag_value = 1;
@@ -29,9 +29,8 @@ int arg_with_value_checker(int *flag_value, int default_value, char *passed_stri
 	char passed_prefix[prefix_length + 1];
 	strncpy(passed_prefix, passed_string, prefix_length);
 	passed_prefix[prefix_length] = '\0';
-	int prefix_check = arg_checker(flag_value, default_value, passed_prefix, true_string_prefix);
 	int return_value = 0;
-	if(prefix_check) {
+	if(arg_checker(flag_value, default_value, passed_prefix, true_string_prefix)) {
 		if(is_number(passed_string + prefix_length)) {
 			int value = atoi(passed_string + prefix_length);
 			if(strlen(passed_string + prefix_length) <= 9) *flag_value = value, return_value = 1;
@@ -46,7 +45,7 @@ int arg_with_value_checker(int *flag_value, int default_value, char *passed_stri
 int main(int argc, char **argv) {
 	int per_process = 0, systemWide = 0, Vnodes = 0, composite = 0;
 	int threshold = -1, output_TXT = 0, output_binary = 0;
-
+	
 	// Parse arguments
 	for(int i = 1; i < argc; i++) {
 		if(arg_checker(&per_process, 0, argv[i], "--per-process"));
@@ -61,10 +60,13 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 	}
-	
+
 	// Default state
+	if(!(per_process || systemWide || Vnodes || composite)) {
+		per_process = 1, systemWide = 1, Vnodes = 1, composite = 1;
+	}
 	if(threshold == -1) threshold = 10;
-	if(argc == 1) per_process = 1, systemWide = 1, Vnodes = 1, composite = 1;
+	
 	printf("%d %d %d %d %d %d %d\n", per_process, systemWide, Vnodes, composite, threshold, output_TXT, output_binary);
 	return 0;
 }
