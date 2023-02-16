@@ -76,7 +76,6 @@ int main(int argc, char **argv) {
 	if(!(per_process || systemWide || Vnodes || composite)) {
 		per_process = 1, systemWide = 1, Vnodes = 1, composite = 1;
 	}
-	if(threshold == -1) threshold = 10;
 	
 	// Display the table
 	display(per_process, systemWide, Vnodes, composite, threshold, output_TXT, output_binary, pid);

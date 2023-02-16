@@ -12,7 +12,7 @@ void display_fd_helper(struct list_node *data_head, struct list_node *fd_head, i
 			data_head -> key, fd_head -> key, fd_data -> filename);
 		if (mode == 2) printf(" %-13ld %ld\n", \
 			fd_head -> key, fd_data -> inode);
-		if (mode == 3) printf(" %-7ld %-8ld %-15s %ld\n", \
+		if (mode == 3) printf(" %-7ld %-8ld %-15s    %ld\n", \
 			data_head -> key, fd_head -> key, fd_data -> filename, \
 			fd_data -> inode);
 		fd_head = fd_head -> next;
@@ -63,10 +63,30 @@ void display_Vnodes(struct list_node *data_head, int pid) {
 }
 
 void display_composite(struct list_node *data_head, int pid) {
-	printf("\n PID     FD       Filename        Inode \n");
-	printf("========================================\n");
+	printf("\n PID     FD       Filename           Inode \n");
+	printf("===========================================\n");
 	display_helper(data_head, 3, pid);
-	printf("========================================\n");
+	printf("===========================================\n");
+}
+
+void display_threshold(struct list_node *data_head, int threshold) {
+	printf("\n## Offending processes:\n");
+	int first = 1;
+	while(data_head != NULL) {
+		struct list_node *fd_head = data_head -> data_head;
+		int number_of_fds = 0;
+		while(fd_head != NULL) {
+			number_of_fds++;
+			fd_head = fd_head -> next;
+		}
+		if (number_of_fds > threshold) {
+			if (first) printf("%ld (%d)", \
+				data_head -> key, number_of_fds), first = 0;
+			else printf(", %ld (%d)", data_head -> key, number_of_fds);
+		}
+		data_head = data_head -> next;
+	}
+	printf("\n");
 }
 
 void display(int per_process, int systemWide, int Vnodes, int composite, \
@@ -79,15 +99,6 @@ void display(int per_process, int systemWide, int Vnodes, int composite, \
 	if (systemWide) display_systemWide(data_head, pid);
 	if (Vnodes) display_Vnodes(data_head, pid);
 	if (composite) display_composite(data_head, pid);
-}
-
-// Frees the memory used by the list
-void free_list(struct list_node *head) {
-    struct list_node *tmp;
-    while (head != NULL) {
-        tmp = head -> next;
-        free(head);
-        head = tmp;
-    }
+	if (threshold != -1) display_threshold(data_head, threshold);
 }
 
