@@ -22,5 +22,14 @@ Constructs the data structure used to hold all the information about the FD tabl
   * `struct list_node *create_new_node(long key, void *data_head, void *data_tail)` -  Creates a new node of doubly-linked list
   * `void insert_at_tail(struct list_node **head, struct list_node **tail, struct list_node *new_node)` - Performs the insertion of new_node at the tail of the list with O(1) complexity.
   * `void construct_fd_list(long pid, struct list_node **data_head, struct list_node **data_tail)` - Construct list of file descriptors associated with the process
-  * `
-### showFDtables.c
+  * `void construct_data(struct list_node **data_head, struct list_node **data_tail)` - Construct list of all user processes
+### display.c
+  * `void display_fd_helper(struct list_node *data_head, struct list_node *fd_head, int mode, int pid, int output_mode)` - Helper function to output the table to console or write it to a file
+  * `struct list_node *find_node(struct list_node *data_head, long key)` - Find the node with specific PID
+  * `void display_helper(struct list_node *data_head, int mode, int pid, int output_mode)` - Helper function to display the table
+  * `void display_per_process(struct list_node *data_head, int pid)` - Displays the per-process table
+  * `void display_systemWide(struct list_node *data_head, int pid)` - Displays the SystemWide table
+  * `void display_Vnodes(struct list_node *data_head, int pid)` - Displays the Vnodes table 
+  * `void display_composite(struct list_node *data_head, int pid, int output_mode)` - Displays the composite table
+  * `void display_threshold(struct list_node *data_head, int threshold)` - Displays the threshold
+  * `void display(int per_process, int systemWide, int Vnodes, int composite, int threshold, int output_TXT, int output_binary, int pid)` - displays the FD tables
