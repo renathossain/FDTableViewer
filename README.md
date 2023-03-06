@@ -6,8 +6,22 @@ Tool to display the tables used by the OS to keep track of open files, assignati
   * Composed view of the previous tables
 
 ## How to use the program
+  * To compile the code, run `make` in the terminal, and then run `make clean` to clean up the object files if needed.
+  * Type `./showFDtables` to run the program in the terminal.
+  * Use `--per-process`, `--systemWide`, `--Vnodes`, `--composite` to display the appropriate tables. If none of these command line arguments are given, then the program displays all of the tables
+  * Enter the PID number of a process to see information only relating to that process, e.g. `./showFDtables 1001`
+  * Use `--threshold=N` to show number of processes that have more than N files open
+  * Use `--output_TXT` and/or `--output_binary` to output to files in text or binary format respectively.
 
 ## How did I solve the problem
+  * Used the 3rd-party libraries: "dirent.h, sys/stat.h, sys/types, unistd.h" to generate the data necessary.
+  * readlink to read the filename, stat for the inobe number, readdir and while loop to loop through the directories
+  * Used nested linked lists to store the data, a list of user processes, and then for each process a list of file descriptors associated with that process
+  * Then read the appropriate data from the data structure, and displayed it using fprintf to the console or written to a file
+  * Written modular code over 3 separate files:
+    * showFDtables.c for main function and argument parsing
+    * construct.c for constructing the data structure used to hold all the information about the FD table
+    * display.c for reading the data stored in the data structure to display the appropriate tables to the console or write them to a file
 
 ## Overview of functions
 ### showFDtables.c
