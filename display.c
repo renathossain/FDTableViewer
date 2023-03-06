@@ -4,7 +4,8 @@
 
 #include "design.h"
 
-void display_fd_helper(struct list_node *data_head, struct list_node *fd_head, int mode, int pid) {
+void display_fd_helper(struct list_node *data_head, struct list_node *fd_head, \
+		int mode, int pid, int output_mode) {
 	while(fd_head != NULL) {
 		struct FD_data *fd_data = fd_head -> data_head;
 		if (mode == 0) printf(" %-7ld %ld\n", data_head -> key, fd_head -> key);
@@ -28,14 +29,14 @@ struct list_node *find_node(struct list_node *data_head, long key) {
 	return NULL;
 }
 
-void display_helper(struct list_node *data_head, int mode, int pid) {
+void display_helper(struct list_node *data_head, int mode, int pid, int output_mode) {
 	if(pid != -1) {
 		struct list_node *pid_node = find_node(data_head, (long)pid);
 		if(pid_node == NULL) return;
-		display_fd_helper(pid_node, pid_node -> data_head, mode, pid);
+		display_fd_helper(pid_node, pid_node -> data_head, mode, pid, output_mode);
 	} else {
 		while(data_head != NULL) {
-			display_fd_helper(data_head, data_head -> data_head, mode, pid);
+			display_fd_helper(data_head, data_head -> data_head, mode, pid, output_mode);
 			data_head = data_head -> next;
 		}
 	}
@@ -44,29 +45,31 @@ void display_helper(struct list_node *data_head, int mode, int pid) {
 void display_per_process(struct list_node *data_head, int pid) {
 	printf("\n PID     FD \n");
 	printf("============\n");
-	display_helper(data_head, 0, pid);
+	display_helper(data_head, 0, pid, 0);
 	printf("============\n");
 }
 
 void display_systemWide(struct list_node *data_head, int pid) {
 	printf("\n PID     FD       Filename \n");
 	printf("========================================\n");
-	display_helper(data_head, 1, pid);
+	display_helper(data_head, 1, pid, 0);
 	printf("========================================\n");
 }
 
 void display_Vnodes(struct list_node *data_head, int pid) {
 	printf("\n FD            Inode \n");
 	printf("========================================\n");
-	display_helper(data_head, 2, pid);
+	display_helper(data_head, 2, pid, 0);
 	printf("========================================\n");
 }
 
-void display_composite(struct list_node *data_head, int pid) {
-	printf("\n PID     FD       Filename           Inode \n");
-	printf("===========================================\n");
-	display_helper(data_head, 3, pid);
-	printf("===========================================\n");
+// output_mode: 0 - print to console, 1 - output text (ASCII), 2 - output binary
+void display_composite(struct list_node *data_head, int pid, int output_mode) {
+	char *text1 = "\n PID     FD       Filename           Inode \n";
+	char *text2 = "===========================================\n";
+	if (output_mode == 0) printf("%s%s", text1, text2);
+	display_helper(data_head, 3, pid, output_mode);
+	if (output_mode == 0) printf("%s", text2);
 }
 
 void display_threshold(struct list_node *data_head, int threshold) {
@@ -98,7 +101,9 @@ void display(int per_process, int systemWide, int Vnodes, int composite, \
 	if (per_process) display_per_process(data_head, pid);
 	if (systemWide) display_systemWide(data_head, pid);
 	if (Vnodes) display_Vnodes(data_head, pid);
-	if (composite) display_composite(data_head, pid);
+	if (composite) display_composite(data_head, pid, 0);
 	if (threshold != -1) display_threshold(data_head, threshold);
+	if (output_TXT) display_composite(data_head, pid, 1);
+	if (output_binary) display_composite(data_head, pid, 2);
 }
 
