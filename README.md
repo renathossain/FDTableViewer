@@ -24,6 +24,7 @@ Constructs the data structure used to hold all the information about the FD tabl
   * `void construct_fd_list(long pid, struct list_node **data_head, struct list_node **data_tail)` - Construct list of file descriptors associated with the process
   * `void construct_data(struct list_node **data_head, struct list_node **data_tail)` - Construct list of all user processes
 ### display.c
+Reads the data stored in the data structure to display the appropriate tables to the console or write them to a file
   * `void display_fd_helper(struct list_node *data_head, struct list_node *fd_head, int mode, int pid, int output_mode)` - Helper function to output the table to console or write it to a file
   * `struct list_node *find_node(struct list_node *data_head, long key)` - Find the node with specific PID
   * `void display_helper(struct list_node *data_head, int mode, int pid, int output_mode)` - Helper function to display the table
