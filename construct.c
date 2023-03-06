@@ -61,10 +61,7 @@ void construct_fd_list(long pid, struct list_node **data_head, struct list_node 
 		link[len] = '\0';
 		
 		struct stat sb;
-		if (stat(path, &sb) == -1) {
-			fprintf(stderr, "Error stat-ing file descriptor %s\n", fd_path);
-			continue;
-		}
+		if (stat(path, &sb) == -1) continue;
 		
 		//Store data
 		struct FD_data *fd_data = (struct FD_data *) malloc(sizeof(struct FD_data));
